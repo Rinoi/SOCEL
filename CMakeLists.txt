@@ -76,7 +76,14 @@ INSTALL(TARGETS ${CMAKE_PROJECT_NAME} ARCHIVE DESTINATION lib)
 INCLUDE(cmake/compilation_settings.cmake)
 CONFIGURE_COMPILATION()
 
+INCLUDE(ExternalProject)
+
 ########## X11 SETTINGS ##########
 
 INCLUDE(cmake/x11_settings.cmake)
 X11_CONFIGURATION()
+
+########## CIMG SETTINGS ##########
+
+INCLUDE(cmake/cimg_settings.cmake)
+CIMG_CONFIGURATION()
