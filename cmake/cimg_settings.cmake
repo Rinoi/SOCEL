@@ -23,26 +23,22 @@
 #
 #
 
-FUNCTION(CIMG_CONFIGURATION)
+EXTERNALPROJECT_ADD(
+  cimg
 
-  EXTERNALPROJECT_ADD(
-    cimg
+  GIT_REPOSITORY "https://github.com/dtschump/CImg.git"
+  GIT_TAG "master"
 
-    GIT_REPOSITORY "https://github.com/dtschump/CImg.git"
-    GIT_TAG "master"
+  UPDATE_COMMAND ""
+  PATCH_COMMAND ""
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  INSTALL_COMMAND ""
 
-    UPDATE_COMMAND ""
-    PATCH_COMMAND ""
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
+  SOURCE_DIR "${CMAKE_SOURCE_DIR}/deps/cimg"
+)
 
-    SOURCE_DIR "${CMAKE_SOURCE_DIR}/deps/cimg"
-  )
+add_dependencies(${CMAKE_PROJECT_NAME} cimg)
 
-  add_dependencies(${CMAKE_PROJECT_NAME} cimg)
-
-  set(CIMG_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/deps/cimg")
-  include_directories(${CIMG_INCLUDE_DIRS})
-
-ENDFUNCTION()
+set(CIMG_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/deps/cimg")
+include_directories(${CIMG_INCLUDE_DIRS})
