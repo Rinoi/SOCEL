@@ -26,10 +26,10 @@
 ########## GLOBAL CONFIGURATION ##########
 
 PROJECT(socel CXX)
+ENABLE_LANGUAGE(C)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 string(TOUPPER ${CMAKE_PROJECT_NAME} PROJECT_NAME)
-INCLUDE(cmake/rules_settings.cmake)
 
 ########## PROJECT DIRECTORIES ##########
 
@@ -80,6 +80,6 @@ INCLUDE(cmake/compilation_settings.cmake)
 
 INCLUDE(ExternalProject)
 
-#INCLUDE(cmake/x11_settings.cmake)
+INCLUDE(cmake/x11_settings.cmake)
 
 INCLUDE(cmake/cimg_settings.cmake)
