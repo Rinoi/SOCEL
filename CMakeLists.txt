@@ -80,6 +80,6 @@ INCLUDE(cmake/compilation_settings.cmake)
 
 INCLUDE(ExternalProject)
 
-INCLUDE(cmake/x11_settings.cmake)
+#INCLUDE(cmake/x11_settings.cmake)
 
 INCLUDE(cmake/cimg_settings.cmake)
