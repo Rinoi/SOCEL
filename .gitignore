@@ -30,4 +30,9 @@
 
 # Build
 build
+
+# Dependencies
 deps
+
+# MacOs
+.DS_Store
