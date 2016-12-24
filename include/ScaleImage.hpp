@@ -269,9 +269,9 @@ public:
   }
 
 public:
-  unsigned int getHeight() const { return (this->height); }
-
-  unsigned int getWidth() const { return (this->width); }
+  unsigned int   getHeight() const { return (this->height); }
+  unsigned int   getWidth() const { return (this->width); }
+  const T *const getData() const { return this->data; }
 
 private:
   T *          data;
