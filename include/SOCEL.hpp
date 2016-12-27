@@ -1,6 +1,7 @@
 #include <iostream>
 #include <list>
 #include "ScaleImage.hpp"
+#include "bound.hpp"
 
 #ifndef __SOCEL__
 #define __SOCEL__
@@ -20,7 +21,10 @@ public:
     ~IChar();
     IChar();
     IChar(const IChar &);
-    IChar(const ScaleImage<uchar> &);
+    IChar(const ScaleImage<uchar> &img,
+	  uint posX, uint posY,
+	  uint width, uint height);
+    IChar(const ScaleImage<uchar> &img, const Bound &bound);
 
     const IChar			&operator=(const IChar &);
 
@@ -32,8 +36,11 @@ public:
 
     const ScaleImage<uchar>	&getImg(const std::string &) const;
 
+    const Bound			&getBound() const;
+
   private:
 
+    Bound			bound;
     ScaleImage<uchar>		img;
   };
 
@@ -47,10 +54,16 @@ public:
   bool				init(const std::string &);
   std::list<Socel::IChar>	getChar(uint CWidth = 28, uint CHeight = 28) const;
 
+  void				save(const std::string &path);
+
 private:
 
+  unsigned int			getMeanY(const std::list<Socel::IChar> &) const;
+  void				sortList(std::list<Socel::IChar> &) const;
+  void				fixAccend(std::list<Socel::IChar> &) const;
   Socel::IChar			getIChar(uint x, uint y,
 					 ScaleImage<bool> &, ScaleImage<bool> &) const;
+  Socel::IChar			getIChar(int x, int y, int width, int height) const;
 
 public:
 
