@@ -236,7 +236,7 @@ unsigned int			Socel::getMeanY(const std::list<Socel::IChar> &list) const
 void				Socel::fixAccend(std::list<Socel::IChar> &list) const
 {
   auto				it = list.begin();
-  int			lim = (double)(this->getMeanY(list)) * 0.42;
+  int			lim = (double)(this->getMeanY(list)) * 0.25;
 
  start:
   while (it != list.end())
