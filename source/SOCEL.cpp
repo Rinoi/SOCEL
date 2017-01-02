@@ -230,7 +230,6 @@ Socel::IChar			Socel::getFirstChar(std::list<Socel::IChar> &list) const
   auto				tmp = list.begin();
   IChar				c;
 
-  std::cout << "getFirstChar" << std::endl;
   for (auto it = list.begin(); it != list.end(); it++)
     {
       double d = getDist((*it).getBound().getX(),
@@ -265,7 +264,7 @@ Socel::IChar			Socel::getNext(const Socel::IChar &ichar,
 	  d = tmp;
 	}
     }
-  if (d == 0)
+  if (d == INT_MAX)
     return (this->getFirstChar(list));
   c = (*i2);
   list.erase(i2);
