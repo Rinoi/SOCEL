@@ -25,6 +25,8 @@
 
 #include <stack>
 
+#include <limits.h>
+
 #include "CImg.h"
 #include "SOCEL.hpp"
 
@@ -200,10 +202,10 @@ Socel::IChar			Socel::getIChar(uint x, uint y,
   // std::cout << "end";
   // return
   {
-    maxX += 2;
+    /*maxX += 2;
     minX -= 2;
     maxY += 2;
-    minY -= 2;
+    minY -= 2;*/
     ScaleImage<uchar> img(maxX - minX, maxY - minY);
 
     for (uint y = minY; y < maxY; y += 1)
@@ -249,7 +251,7 @@ Socel::IChar			Socel::getNext(const Socel::IChar &ichar,
 					       std::list<Socel::IChar> &list) const
 {
   auto				i2 = list.begin();
-  int				d = 0;
+  int				d = INT_MAX;
   int				tmp;
   IChar				c;
 
@@ -257,7 +259,7 @@ Socel::IChar			Socel::getNext(const Socel::IChar &ichar,
     {
       tmp = Bound::getDistX(ichar.getBound(), (*it).getBound());
       if (Bound::getDistY(ichar.getBound(), (*it).getBound()) <= 0 &&
-	  (d == 0 || (tmp < d && tmp > 0)))
+	  (tmp < d && tmp >= 0))
 	{
 	  i2 = it;
 	  d = tmp;
