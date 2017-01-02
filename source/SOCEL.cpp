@@ -100,7 +100,7 @@ Socel::IChar::getResize(uint width, uint height) const {
   return (Socel::IChar(img, this->bound));
 }
 
-const ScaleImage<uchar>		&Socel::IChar::getImg(const std::string &) const
+const ScaleImage<uchar>		&Socel::IChar::getImg() const
 {
   return (this->img);
 }
@@ -216,11 +216,80 @@ Socel::IChar			Socel::getIChar(uint x, uint y,
   }
 }
 
+static double			getDist(double x, double y)
+{
+  return (sqrt(x * x + y * y));
+}
+
+Socel::IChar			Socel::getFirstChar(std::list<Socel::IChar> &list) const
+{
+  double			dist = getDist(list.front().getBound().getX(),
+					    list.front().getBound().getY());
+  auto				tmp = list.begin();
+  IChar				c;
+
+  std::cout << "getFirstChar" << std::endl;
+  for (auto it = list.begin(); it != list.end(); it++)
+    {
+      double d = getDist((*it).getBound().getX(),
+			 (*it).getBound().getY());
+
+      if (dist > d)
+	{
+	  dist = d;
+	  tmp = it;
+	}
+    }
+  c = (*tmp);
+  list.erase(tmp);
+  return (c);
+}
+
+Socel::IChar			Socel::getNext(const Socel::IChar &ichar,
+					       std::list<Socel::IChar> &list) const
+{
+  auto				i2 = list.begin();
+  int				d = 0;
+  int				tmp;
+  IChar				c;
+
+  for (auto it = list.begin(); it != list.end(); it++)
+    {
+      tmp = Bound::getDistX(ichar.getBound(), (*it).getBound());
+      if (Bound::getDistY(ichar.getBound(), (*it).getBound()) <= 0 &&
+	  (d == 0 || (tmp < d && tmp > 0)))
+	{
+	  i2 = it;
+	  d = tmp;
+	}
+    }
+  if (d == 0)
+    return (this->getFirstChar(list));
+  c = (*i2);
+  list.erase(i2);
+  return (c);
+}
+
 void				Socel::sortList(std::list<Socel::IChar> &Alist) const
 {
   std::list<Socel::IChar>	list;
-
+  Bound				bound;
+  Socel::IChar			tmp;
+      
+  //init
   list = Alist;
+  if (list.empty() == true)
+    return ;
+  Alist.clear();
+  //end
+
+  tmp = this->getFirstChar(list);
+  Alist.push_back(tmp);
+  while (list.empty() == false)
+    {
+      tmp = this->getNext(tmp, list);
+      Alist.push_back(tmp);
+    }
 }
 
 unsigned int			Socel::getMeanY(const std::list<Socel::IChar> &list) const

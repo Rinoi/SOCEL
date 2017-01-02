@@ -8,13 +8,23 @@ public:
   
   static int	getDistX(const Bound &b1, const Bound &b2)
   {
+    if (b2.x <= b1.x && b1.x <= b2.x + b2.width)
+      return (0);
+    if (b1.x <= b2.x && b2.x <= b1.x + b1.width)
+      return (0);
+
     if (b1.x > b2.x)
-      return (b1.x - (b2.x + b2.width));
+	return (b1.x - (b2.x + b2.width));
     return (b2.x - (b1.x + b1.width));
   }
 
   static int	getDistY(const Bound &b1, const Bound &b2)
   {
+    if (b2.y <= b1.y && b1.y <= b2.y + b2.height)
+      return (0);
+    if (b1.y <= b2.y && b2.y <= b1.y + b1.height)
+      return (0);
+
     if (b1.y > b2.y)
       return (b1.y - (b2.y + b2.height));
     return (b2.y - (b1.y + b1.height));

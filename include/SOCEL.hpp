@@ -54,7 +54,7 @@ public:
     IChar getResize(uint width, uint height) const;
 
   public:
-    const ScaleImage<uchar> &getImg(const std::string &) const;
+    const ScaleImage<uchar>	&getImg() const;
 
     const Bound			&getBound() const;
 
@@ -83,6 +83,12 @@ private:
   Socel::IChar			getIChar(uint x, uint y,
 					 ScaleImage<bool> &, ScaleImage<bool> &) const;
   Socel::IChar			getIChar(int x, int y, int width, int height) const;
+
+  Socel::IChar			getFirstChar(std::list<Socel::IChar> &) const;
+  //and erase
+
+  Socel::IChar			getNext(const Socel::IChar &, std::list<Socel::IChar> &) const;
+  //and erase
 
 public:
   bool setCOp(uint CWidth, uint CHeight);
