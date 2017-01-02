@@ -285,15 +285,15 @@ std::list<Socel::IChar>		Socel::getChar(uint CWidth, uint CHeight) const
   std::list<Socel::IChar>	list;
 
   // init
-  for (uint y = 0; y < this->img.getWidth(); y += 1)
+  for (uint y = 0; y < this->img.getHeight(); y += 1)
     for (uint x = 0; x < this->img.getWidth(); x += 1)
       {
 	testImg.setValueAt(x, y, false);
 	binImg.setValueAt(x, y,
-			  this->img.valueAt(x, y) <= 85 ? true : false);
+			  this->img.valueAt(x, y) <= 250 ? true : false);
       }
   //iterate
-  for (uint y = 0; y < this->img.getWidth(); y += 1)
+  for (uint y = 0; y < this->img.getHeight(); y += 1)
     for (uint x = 0; x < this->img.getWidth(); x += 1) {
       if (testImg.valueAt(x, y) == true)
         continue;
