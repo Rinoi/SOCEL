@@ -173,6 +173,7 @@ Socel::IChar			Socel::getIChar(uint x, uint y,
 						ScaleImage<bool> &testImg) const
 {
   std::stack<t_ptn>		stack;
+  std::list<t_ptn>		list;
   uint				maxX = x;
   uint				minX = x;
   uint				maxY = y;
@@ -189,6 +190,7 @@ Socel::IChar			Socel::getIChar(uint x, uint y,
     stack.pop();
     if (testImg.valueAt(x, y) == true)
       continue;
+    list.push_back(ptn);
     testImg.setValueAt(x, y, true);
     if (binImg.valueAt(x, y) == true) {
       verifMaxMinV(maxX, minX, x);
@@ -211,7 +213,10 @@ Socel::IChar			Socel::getIChar(uint x, uint y,
     for (uint y = minY; y < maxY; y += 1)
       for (uint x = minX; x < maxX; x += 1)
 	img.setValueAt(x - minX, y - minY,
-		       this->img.valueAt(x, y));
+		       255);
+    for (auto it = list.begin(); it != list.end(); it++)
+      img.setValueAt((*it).x - minX, (*it).y - minY,
+		     this->img.valueAt((*it).x, (*it).y));
     return (IChar(img,
 		  minX, minY,
 		  maxX - minX, maxY - minY));
