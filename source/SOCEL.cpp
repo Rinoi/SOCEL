@@ -188,9 +188,9 @@ Socel::IChar			Socel::getIChar(uint x, uint y,
     y = ptn.y;
     // std::cout << "a";
     stack.pop();
+    list.push_back(ptn);
     if (testImg.valueAt(x, y) == true)
       continue;
-    list.push_back(ptn);
     testImg.setValueAt(x, y, true);
     if (binImg.valueAt(x, y) == true) {
       verifMaxMinV(maxX, minX, x);
@@ -365,7 +365,7 @@ std::list<Socel::IChar>		Socel::getChar(uint CWidth, uint CHeight) const
       {
 	testImg.setValueAt(x, y, false);
 	binImg.setValueAt(x, y,
-			  this->img.valueAt(x, y) <= 250 ? true : false);
+			  this->img.valueAt(x, y) <= 233 ? true : false);
       }
   //iterate
   for (uint y = 0; y < this->img.getHeight(); y += 1)
