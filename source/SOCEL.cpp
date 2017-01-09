@@ -441,7 +441,7 @@ std::list<Socel::IChar>		Socel::getChar(uint CWidth, uint CHeight) const
         continue;
       if (binImg.valueAt(x, y) == true) {
         Socel::IChar Ichar = this->getIChar(x, y, binImg, testImg);
-        list.push_back(Ichar/*Ichar.getResize(CWidth, CHeight)*/);
+        list.push_back(Ichar.getResize(CWidth, CHeight));
       }
     }
   this->fixAccend(list);
