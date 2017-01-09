@@ -36,6 +36,11 @@ Socel::IChar::~IChar() {}
 
 Socel::IChar::IChar() {}
 
+Socel::IChar::IChar(Socel::IChar::Type type)
+{
+  this->type = type;
+}
+
 Socel::IChar::IChar(const IChar &Ichar) {
   *this = Ichar;
 }
@@ -45,6 +50,7 @@ Socel::IChar::IChar(const ScaleImage<uchar> &img,
 		    uint width, uint height)
 {
   this->img = img;
+  this->type = Socel::IChar::IMG;
   this->bound = Bound(posX, posY, width, height);
 }
 
@@ -58,24 +64,41 @@ Socel::IChar::IChar(const ScaleImage<uchar> &img,
 const Socel::IChar &
 Socel::IChar::operator=(const IChar &Ichar) {
   this->img = Ichar.img;
+  this->type = Ichar.type;
   this->bound = Ichar.bound;
   return (*this);
 }
 
 void
 Socel::IChar::save(const std::string &path) {
-  cimg_library::CImg<uint> img(this->img.getWidth(), this->img.getHeight());
 
-  for (uint y = 0; y < this->img.getHeight(); y += 1)
-    for (uint x = 0; x < this->img.getWidth(); x += 1) {
-      uint   color;
-      uchar *ptn = (uchar *)(&color);
+  cimg_library::CImg<uint> img;
 
-      ptn[0] = this->img.valueAt(x, y);
-      ptn[1] = this->img.valueAt(x, y);
-      ptn[2] = this->img.valueAt(x, y);
-      ptn[3] = this->img.valueAt(x, y);
-      img(x, y) = color;
+  if (this->type == Socel::IChar::IMG)
+    {
+      img = cimg_library::CImg<uint>(this->img.getWidth(), this->img.getHeight());
+      for (uint y = 0; y < this->img.getHeight(); y += 1)
+	for (uint x = 0; x < this->img.getWidth(); x += 1)
+	  {
+	    uint	color;
+	    uchar	*ptn = (uchar*)(&color);
+	
+	    ptn[0] = this->img.valueAt(x, y);
+	    ptn[1] = this->img.valueAt(x, y);
+	    ptn[2] = this->img.valueAt(x, y);
+	    ptn[3] = this->img.valueAt(x, y);
+	    img(x, y) = color;
+	  }
+    }
+  else if (this->type == Socel::IChar::SPACE)
+    {
+      img = cimg_library::CImg<uint>(1, 1);
+      img(0, 0) = 0xFFFFFFFF;
+    }
+  else
+    {
+      img = cimg_library::CImg<uint>(1, 1);
+      img(0, 0) = 0x0;
     }
   img.save(path.c_str());
 }
@@ -102,6 +125,21 @@ Socel::IChar::getResize(uint width, uint height) const {
   return (Socel::IChar(img, this->bound));
 }
 
+bool				Socel::IChar::isSpace() const
+{
+  return (this->type == Socel::IChar::SPACE);
+}
+
+bool				Socel::IChar::isReturn() const
+{
+  return (this->type == Socel::IChar::RETURN);
+}
+
+bool				Socel::IChar::isImg() const
+{
+  return (this->type == Socel::IChar::IMG);
+}
+
 const ScaleImage<uchar>		&Socel::IChar::getImg() const
 {
   return (this->img);
@@ -111,6 +149,12 @@ const Bound			&Socel::IChar::getBound() const
 {
   return (this->bound);
 }
+
+Socel::IChar::Type		Socel::IChar::getType() const
+{
+  return (this->type);
+}
+
 //SOCEL
 
 Socel::~Socel() {}
@@ -188,11 +232,11 @@ Socel::IChar			Socel::getIChar(uint x, uint y,
     y = ptn.y;
     // std::cout << "a";
     stack.pop();
-    list.push_back(ptn);
     if (testImg.valueAt(x, y) == true)
       continue;
     testImg.setValueAt(x, y, true);
     if (binImg.valueAt(x, y) == true) {
+      list.push_back(ptn);
       verifMaxMinV(maxX, minX, x);
       verifMaxMinV(maxY, minY, y);
       stack.push({x + 1, y});
@@ -205,9 +249,9 @@ Socel::IChar			Socel::getIChar(uint x, uint y,
   // return
   {
     /*maxX += 2;
-    minX -= 2;
-    maxY += 2;
-    minY -= 2;*/
+      minX -= 2;
+      maxY += 2;
+      minY -= 2;*/
     ScaleImage<uchar> img(maxX - minX, maxY - minY);
 
     for (uint y = minY; y < maxY; y += 1)
@@ -216,7 +260,7 @@ Socel::IChar			Socel::getIChar(uint x, uint y,
 		       255);
     for (auto it = list.begin(); it != list.end(); it++)
       img.setValueAt((*it).x - minX, (*it).y - minY,
-		     this->img.valueAt((*it).x, (*it).y));
+      this->img.valueAt((*it).x, (*it).y));
     return (IChar(img,
 		  minX, minY,
 		  maxX - minX, maxY - minY));
@@ -252,13 +296,15 @@ Socel::IChar			Socel::getFirstChar(std::list<Socel::IChar> &list) const
 }
 
 Socel::IChar			Socel::getNext(const Socel::IChar &ichar,
-					       std::list<Socel::IChar> &list) const
+					       std::list<Socel::IChar> &list,
+					       int &prev, unsigned int meanX) const
 {
   auto				i2 = list.begin();
   int				d = INT_MAX;
   int				tmp;
   IChar				c;
 
+  prev = 0;
   for (auto it = list.begin(); it != list.end(); it++)
     {
       tmp = Bound::getDistX(ichar.getBound(), (*it).getBound());
@@ -270,7 +316,12 @@ Socel::IChar			Socel::getNext(const Socel::IChar &ichar,
 	}
     }
   if (d == INT_MAX)
-    return (this->getFirstChar(list));
+    {
+      prev = 2;
+      return (this->getFirstChar(list));
+    }
+  if (d >= meanX * 0.45)
+      prev = 1;
   c = (*i2);
   list.erase(i2);
   return (c);
@@ -293,7 +344,13 @@ void				Socel::sortList(std::list<Socel::IChar> &Alist) const
   Alist.push_back(tmp);
   while (list.empty() == false)
     {
-      tmp = this->getNext(tmp, list);
+      int prev;
+
+      tmp = this->getNext(tmp, list, prev, this->getMeanX(Alist));
+      if (prev == 1)
+	Alist.push_back(Socel::IChar(Socel::IChar::SPACE));
+      else if (prev == 2)
+	Alist.push_back(Socel::IChar(Socel::IChar::RETURN));
       Alist.push_back(tmp);
     }
 }
@@ -304,6 +361,16 @@ unsigned int			Socel::getMeanY(const std::list<Socel::IChar> &list) const
 
   for (auto it = list.begin(); it != list.end(); it++)
     mean += (*it).getBound().getHeight();
+  mean /= list.size();
+  return (mean);
+}
+
+unsigned int			Socel::getMeanX(const std::list<Socel::IChar> &list) const
+{
+  unsigned int			mean = 0;
+
+  for (auto it = list.begin(); it != list.end(); it++)
+    mean += (*it).getBound().getWidth();
   mean /= list.size();
   return (mean);
 }
@@ -374,7 +441,7 @@ std::list<Socel::IChar>		Socel::getChar(uint CWidth, uint CHeight) const
         continue;
       if (binImg.valueAt(x, y) == true) {
         Socel::IChar Ichar = this->getIChar(x, y, binImg, testImg);
-        list.push_back(Ichar.getResize(CWidth, CHeight));
+        list.push_back(Ichar/*Ichar.getResize(CWidth, CHeight)*/);
       }
     }
   this->fixAccend(list);

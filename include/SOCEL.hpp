@@ -39,8 +39,14 @@ public:
   class IChar {
 
   public:
+
+    enum Type
+      {SPACE, RETURN, IMG};
+
+  public:
     ~IChar();
     IChar();
+    IChar(Type type);
     IChar(const IChar &);
     IChar(const ScaleImage<uchar> &img,
 	  uint posX, uint posY,
@@ -49,19 +55,26 @@ public:
 
     const IChar &operator=(const IChar &);
 
-    void save(const std::string &path);
-    void resize(uint width, uint height);
-    IChar getResize(uint width, uint height) const;
+    void			save(const std::string &path);
+    void			resize(uint width, uint height);
+    IChar			getResize(uint width, uint height) const;
+
+    bool			isSpace() const;
+    bool			isReturn() const;
+    bool			isImg() const;
 
   public:
     const ScaleImage<uchar>	&getImg() const;
 
     const Bound			&getBound() const;
 
+    Type			getType() const;
+
   private:
 
     Bound			bound;
-    ScaleImage<uchar> img;
+    ScaleImage<uchar>		img;
+    Type			type;
   };
 
 public:
@@ -70,14 +83,15 @@ public:
   Socel();
   Socel(const std::string &);
 
-  bool                    init(const std::string &);
-  std::list<Socel::IChar> getChar(uint CWidth = 28, uint CHeight = 28) const;
+  bool				init(const std::string &);
+  std::list<Socel::IChar>	getChar(uint CWidth = 28, uint CHeight = 28) const;
 
   void				save(const std::string &path);
 
 private:
 
   unsigned int			getMeanY(const std::list<Socel::IChar> &) const;
+  unsigned int			getMeanX(const std::list<Socel::IChar> &) const;
   void				sortList(std::list<Socel::IChar> &) const;
   void				fixAccend(std::list<Socel::IChar> &) const;
   Socel::IChar			getIChar(uint x, uint y,
@@ -87,16 +101,18 @@ private:
   Socel::IChar			getFirstChar(std::list<Socel::IChar> &) const;
   //and erase
 
-  Socel::IChar			getNext(const Socel::IChar &, std::list<Socel::IChar> &) const;
+  Socel::IChar			getNext(const Socel::IChar &, std::list<Socel::IChar> &,
+					int &xprev, unsigned int meanX) const;
   //and erase
 
 public:
-  bool setCOp(uint CWidth, uint CHeight);
+  bool				setCOp(uint CWidth, uint CHeight);
 
-  const std::string &      getPathName() const;
-  const ScaleImage<uchar> &getImg() const;
+  const std::string &		getPathName() const;
+  const ScaleImage<uchar>	&getImg() const;
 
 private:
-  std::string       pathName;
-  ScaleImage<uchar> img;
+  std::string			pathName;
+  ScaleImage<uchar>		img;
+  unsigned int			meanX;
 };
